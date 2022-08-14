@@ -1,15 +1,13 @@
-FROM openjdk:17-alpine
-RUN addgroup -S spring && adduser -S spring -G spring
-RUN mkdir logs
-VOLUME /logs
-RUN apk add tzdata
-EXPOSE 8080 8443
+FROM node:16.15 as build-stage
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-ENV JAVA_PROFILE dev-release
-ARG DEPENDENCY=target/dependency
-COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/BOOT-INF/classes /app
-
-ENTRYPOINT ["java",   "-Dspring.profiles.active=${JAVA_PROFILE}",\
-            "-cp","app:app/lib/*","transmatter.platform.administration.AdministrationApplication"]
+# production stage
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+COPY ./nginx-nuxt-app.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
