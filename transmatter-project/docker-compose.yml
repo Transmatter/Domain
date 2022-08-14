@@ -5,6 +5,6 @@ services:
     ports:
       - 8080:8080
   frontend:
-    image: oat431/platfrom:latest
+    image: oat431/platform:latest
     ports:
       - 80:80
