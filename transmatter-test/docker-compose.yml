@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  backend:
+    image: oat431/admin:test
+    ports:
+      - 3917:3917
+  frontend:
+    image: oat431/platform:test
+    ports:
+      - 3300:80

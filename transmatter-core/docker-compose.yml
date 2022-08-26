@@ -9,7 +9,6 @@ services:
       MYSQL_ROOT_PASSWORD: 1590
   phpmyadmin:
     image: phpmyadmin
-    restart: always
     ports:
       - 9000:80
     environment:
