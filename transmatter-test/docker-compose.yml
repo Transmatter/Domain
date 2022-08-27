@@ -1,5 +1,9 @@
 version: '3.8'
 services:
+  content_provider:
+    image: oat431/content:latest
+    ports:
+      - 5000:5000
   backend:
     image: oat431/admin:test
     ports:

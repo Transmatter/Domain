@@ -1,15 +1,15 @@
-FROM openjdk:17-alpine
-RUN addgroup -S spring && adduser -S spring -G spring
-RUN mkdir logs
-VOLUME /logs
-RUN apk add tzdata
-EXPOSE 8080 8443
+FROM python:3.9
 
-ENV JAVA_PROFILE dev-release
-ARG DEPENDENCY=target/dependency
-COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/BOOT-INF/classes /app
+WORKDIR /python-docker
 
-ENTRYPOINT ["java",   "-Dspring.profiles.active=${JAVA_PROFILE}",\
-            "-cp","app:app/lib/*","transmatter.platform.administration.AdministrationApplication"]
+COPY requirements.txt char2vec.bin ./
+
+RUN pip3 install -r requirements.txt
+
+RUN git clone https://github.com/facebookresearch/fastText.git && \
+    cd fastText && \
+    pip install .
+
+COPY . .
+
+CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
